@@ -1,0 +1,10 @@
+{
+  "env": "development",
+  "hostname": "localhost",
+  "port": 3000,
+  "shared": {
+    "paths": {
+      "static": "your_static_directory/"
+    }
+  }
+}

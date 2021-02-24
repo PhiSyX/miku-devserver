@@ -1,0 +1,143 @@
+/* Ceci est un fichier d'exemple par défaut généré par miku-devserver */
+
+:root {
+  --root_bg: #212121;
+  --root_color: #EAF2F4;
+
+  --pre_bg: #2D3135;
+  --pre_color: #F5D76E;
+
+  --code_color: #D25265;
+  --code-hl_color: #fff;
+}
+
+[data-theme="light"] {
+  --root_bg: #fff;
+  --root_color: #212121;
+
+  --pre_bg: #EAF2F4;
+  --pre_color: #808080;
+
+  --code_color: #638BB3;
+  --code-hl_color: #fff;
+}
+
+html, body, main {
+  background: var(--root_bg);
+  color: var(--root_color);
+  transition: background-color .5s;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 75ch;
+  padding: 1rem;
+}
+
+cite {
+  color: var(--pre_color);
+}
+
+pre {
+  padding: 2ch;
+
+  border-radius: 10px;
+
+  background: var(--pre_bg);
+  color: var(--pre_color);
+}
+
+code {
+  font-family: 'JetBrains Mono', monospace, sans-serif;
+  font-size: 13px;
+  color: var(--code_color);
+}
+
+pre code {
+  line-height: 1.4;
+}
+
+header {
+  position: relative;
+}
+
+.hl {
+  padding: 0 3px;
+
+  border-radius: 2px;
+
+  background: var(--code_color);
+  color: var(--code-hl_color);
+}
+
+/* THEME */
+
+.theme {
+  font-size: 13px;
+  font-weight: bold;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+}
+
+.theme input[type="checkbox"] {
+  -webkit-appearance: none;
+
+  position: relative;
+
+  margin: 0;
+  margin-left: 10px;
+  margin-right: 15px;
+
+  outline: none;
+
+  width: 40px;
+  height: 16px;
+
+  transition: .4s;
+  background: linear-gradient(92.57deg, #DDDDDD 18.82%, rgba(221, 221, 221, 0.25) 199.49%, #DDDDDD 199.49%);
+  border: 1px solid #CCCCCC;
+  box-sizing: border-box;
+
+  border-radius: 50px;
+}
+
+.theme input[type="checkbox"]:checked {
+  background: linear-gradient(128.58deg, #D8AF20 34.23%, rgba(216, 175, 32, 0.25) 146.54%);
+  border-color: #D8AF20;
+}
+
+.theme input[type="checkbox"]:before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  bottom: 0;
+  left: -5px;
+
+  transition: .4s;
+
+  width: 24px;
+  height: 24px;
+
+  border: 1px solid #BBBBBB;
+  border-radius: 50px;
+  box-sizing: border-box;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background: #DDDDDD;
+}
+
+.theme input[type="checkbox"]:checked:before {
+  transform: translate(100%);
+  transition: .4s;
+  left: 0;
+
+  background: #DDDDDD;
+}
+

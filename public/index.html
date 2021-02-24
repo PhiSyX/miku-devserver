@@ -1,0 +1,59 @@
+<!-- Ceci est un fichier d'exemple par défaut généré par miku-devserver -->
+
+<!doctype html>
+<html lang="fr" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="/css/example.css">
+  <title>miku-devserver - public/index.html</title>
+</head>
+
+<body>
+  <main>
+    <header>
+      <h1>It Works !</h1>
+
+      <p>
+        Ceci est la page statique par défaut du serveur.
+        <br>
+        <cite>miku-devserver</cite>
+      </p>
+
+      <p>
+        Crée le
+        <time datetime="2021-02-25">25 Février 2021</time>
+      </p>
+
+      <label class="theme">
+        LIGHT
+        <input id="js-theme" type="checkbox" checked>
+        DARK
+      </label>
+    </header>
+
+    <p>
+      La destination de ce répertoire est définie dans la configuration du fichier `./config/config_default.json`
+    <pre>shared.paths.<code class="hl">static</code></pre>
+    </p>
+
+    <pre>
+$ cat ./config/config_default.json
+
+<code>{
+  "env": "development",
+  "shared": {
+    "paths": {
+      <code class="hl">"static"</code>: "public/"
+    }
+  }
+}</code>
+</pre>
+  </main>
+
+  <script type="text/javascript" src="/js/main.js"></script>
+</body>
+
+</html>
