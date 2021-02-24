@@ -4,8 +4,8 @@
 ```
   deno install --allow-read --allow-net ./bin/miku-devserver.ts
 
-  --allow-read est requis pour pouvoir les fichiers ;
-  --allow-net est requis pour pouvoir créer le serveur ;
+  --allow-read est requis pour pouvoir lire ou créer des fichiers ;
+  --allow-net est requis pour pouvoir créer un réseau ;
 ```
 
 ### Lancer l'exécutable
@@ -16,7 +16,7 @@
 ## ROADMAP
 1) Créer un serveur HTTP configurable.
 
-    1)  Pouvoir rendre des fichiers statiques, qui eux, seront situés
+    1)  ✔️ Rendre des fichiers statiques, qui eux, seront situés
     dans un répertoire particulier, par exemple "public/".
         Les fichiers de ce répertoire ne seront pas évalués par les points suivants ;
 
