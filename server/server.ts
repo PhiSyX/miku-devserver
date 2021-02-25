@@ -34,6 +34,7 @@ import type {
   ConfigFileJSON,
 } from "../config/config_file.d.ts";
 
+import { serveJson } from "./serve_json.ts";
 import { serveEcmaScript } from "./serve_ecmascript.ts";
 
 export type ServerRequestContext = ServerRequest & { url: URL };
@@ -86,6 +87,22 @@ export function createServer(/*mut*/ config: Partial<ConfigFileJSON>) {
       options as Deno.ListenOptions,
       handleServerRequest(config as ConfigFileInterface),
     );
+}
+
+/**
+ * Retourne un boolean, true si l'URL est "appelée" à partir d'un import de script, false sinon.
+ */
+function isImportRequest(request: ServerRequestContext) {
+  const cleanUrl = (url: string) => {
+    const queryRE = /\?.*$/;
+    const hashRE = /\#.*$/;
+    return url.replace(hashRE, "").replace(queryRE, "");
+  };
+
+  const fetchDest = request.headers.get("sec-fetch-dest") === "script";
+  const referer = cleanUrl(request.headers.get("referer") || "");
+  const queryRaw = request.url.searchParams.has("raw");
+  return !queryRaw && fetchDest || /\.[jt]sx?$/.test(referer);
 }
 
 function getURL(config: ConfigFileInterface) {
@@ -185,11 +202,13 @@ function handleRequest(config: ConfigFileInterface) {
     headers.set("X-Powered-By", `miku-devserver`);
     headers.set(
       "Content-Type",
-      <string> contentType(response.rawType),
+      !isImportRequest(request)
+        ? <string> contentType(response.rawType)
+        : <string> contentType(response.sourceType),
     );
 
     sendResponse(request, {
-      body: response.raw,
+      body: !isImportRequest(request) ? response.raw : response.source,
       status: response.status,
       headers,
     });
@@ -217,6 +236,13 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
     };
 
     switch (rawType) {
+      case ".json":
+        response = {
+          ...response,
+          ...(await serveJson(config)(request, { filename, body: raw })),
+        };
+        break;
+
       case ".js":
       case ".jsx":
       case ".ts":
@@ -245,7 +271,7 @@ function sendResourceStatically(config: ConfigFileInterface, options: {
       request,
     );
 
-    const raw = await readFile(filename, "utf-8");
+    const raw = await readFile(filename);
     const rawType = extname(filename);
 
     return {

@@ -1,6 +1,8 @@
 import { h, render } from "https://cdn.skypack.dev/preact";
 import { useEffect, useState } from "https://cdn.skypack.dev/preact/hooks";
 
+import fileJSON from "./file.json";
+
 const $el$html = document.documentElement;
 
 const DARK = "dark";
@@ -8,6 +10,8 @@ const LIGHT = "light";
 
 function ClientApp() {
   const [theme, setTheme] = useState(DARK);
+
+  console.log(fileJSON);
 
   /**
    * Change la couleur du thème ;
