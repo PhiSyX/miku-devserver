@@ -10,7 +10,11 @@
 
 ### Lancer l'exécutable
 ```
-  miku-devserver # or miku-devserver.cmd
+  miku-devserver
+  miku-devserver --config=./config/config_example.json
+  miku-devserver --config=./config/your_config_file.json
+
+  # or miku-devserver.cmd
 ```
 
 ## ROADMAP
