@@ -34,6 +34,7 @@ import type {
   ConfigFileJSON,
 } from "../config/config_file.d.ts";
 
+import { cache } from "./memory_cache.ts";
 import { serveJson } from "./serve_json.ts";
 import { serveEcmaScript } from "./serve_ecmascript.ts";
 
@@ -51,6 +52,8 @@ export interface ResponseRequest {
   sourceType: string;
 
   status: number;
+
+  mtime: Date;
 }
 
 export function createServer(/*mut*/ config: Partial<ConfigFileJSON>) {
@@ -222,6 +225,18 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
   return async (request: ServerRequestContext): Promise<ResponseRequest> => {
     const { filename, status } = await getResource(config, options)(request);
 
+    const stats = await Deno.lstat(filename);
+
+    const url = request.url.pathname;
+    if (cache(config).has(url)) {
+      const { mtime } = cache(config).get(url) as ResponseRequest;
+      if ((<Date> stats.mtime).getTime() > (<Date> mtime).getTime()) {
+        cache(config).delete(url);
+      } else {
+        return cache(config).get(url) as ResponseRequest;
+      }
+    }
+
     const raw = await readFile(filename, "utf-8");
     const rawType = extname(filename);
 
@@ -233,6 +248,8 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
       sourceType: rawType,
 
       status,
+
+      mtime: stats.mtime as Date,
     };
 
     switch (rawType) {
@@ -254,7 +271,9 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
         break;
     }
 
-    return response;
+    cache(config).set(url, response);
+
+    return cache(config).get(url) as ResponseRequest;
   };
 }
 
@@ -271,10 +290,22 @@ function sendResourceStatically(config: ConfigFileInterface, options: {
       request,
     );
 
+    const stats = await Deno.lstat(filename);
+
+    const url = request.url.pathname;
+    if (cache(config).has(url)) {
+      const { mtime } = cache(config).get(url) as ResponseRequest;
+      if ((<Date> stats.mtime).getTime() > (<Date> mtime).getTime()) {
+        cache(config).delete(url);
+      } else {
+        return cache(config).get(url) as ResponseRequest;
+      }
+    }
+
     const raw = await readFile(filename);
     const rawType = extname(filename);
 
-    return {
+    cache(config).set(url, {
       raw,
       rawType,
 
@@ -282,7 +313,11 @@ function sendResourceStatically(config: ConfigFileInterface, options: {
       sourceType: rawType,
 
       status,
-    };
+
+      mtime: stats.mtime as Date,
+    });
+
+    return cache(config).get(url) as ResponseRequest;
   };
 }
 
@@ -311,7 +346,7 @@ function getNamespace(config: ConfigFileInterface) {
 
 // Retourne une resource existante ou un fichier 404 ;
 function getResource(
-  config: ConfigFileInterface,
+  _config: ConfigFileInterface,
   options: {
     namespace: string;
     root: string;

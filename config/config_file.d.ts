@@ -16,4 +16,5 @@ export interface ConfigFileInterface {
       [p: string]: string;
     };
   };
+  cache?: boolean;
 }

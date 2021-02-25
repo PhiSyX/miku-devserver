@@ -11,5 +11,6 @@
       "static": "public/",
       "client": "client/"
     }
-  }
+  },
+  "cache": true
 }
