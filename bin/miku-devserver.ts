@@ -12,22 +12,22 @@ interface CommandArgs {
 async function getConfig(
   args: CommandArgs,
 ): Promise<ConfigFileJSON> {
-  let file_name = args.config || "./config/config_default.json";
-  let encoding = "json";
+  const fileName = args.config || "./config/config_default.json";
+  const encoding = "json";
 
   return await readFile(
-    file_name,
+    fileName,
     encoding,
   );
 }
 
 // Récupère les arguments de la ligne de commande ;
-const command_args: CommandArgs = getCommandArgs();
+const commandArgs: CommandArgs = getCommandArgs();
 
 // Récupère le fichier de configuration passé en argument, si existe ;
-const /* mut */ file_config: ConfigFileJSON = await getConfig(
-  command_args,
+const /* mut */ fileConfig: ConfigFileJSON = await getConfig(
+  commandArgs,
 );
 
 // Crée un serveur à partir des informations du fichier de configuration ;
-createServer(file_config);
+createServer(fileConfig);
