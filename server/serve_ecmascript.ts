@@ -10,12 +10,12 @@ export function serveEcmaScript(config: ConfigFileInterface) {
   return async (
     request: ServerRequestContext,
     response: ServerResponseContext,
-  ): Promise<Omit<ResponseRequest, "status">> => {
+  ): Promise<Omit<ResponseRequest, "status" | "mtime">> => {
     const { body } = response;
 
-    let code = `${body}`;
+    const code = `${body}`;
 
-    let output = await Deno.emit(
+    const output = await Deno.emit(
       request.url.pathname,
       {
         sources: {
@@ -32,8 +32,8 @@ export function serveEcmaScript(config: ConfigFileInterface) {
       },
     );
 
-    let source = Object.values(output.files)[0];
-    let sourceType = ".js";
+    const source = Object.values(output.files)[0];
+    const sourceType = ".js";
 
     return {
       raw: source,

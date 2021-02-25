@@ -7,10 +7,10 @@ import type {
 } from "./server.ts";
 
 export function serveJson(_config: ConfigFileInterface) {
-  return async (
+  return (
     _request: ServerRequestContext,
     response: ServerResponseContext,
-  ): Promise<Pick<ResponseRequest, "raw" | "source" | "sourceType">> => {
+  ): Pick<ResponseRequest, "raw" | "source" | "sourceType"> => {
     const { body } = <Required<ServerResponseContext>> response;
 
     // Le body retourne un object JS quand il s'agit d'un JSON (readFile)
