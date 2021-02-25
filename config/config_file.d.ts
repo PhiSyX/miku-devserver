@@ -8,7 +8,7 @@ export interface ConfigFileInterface {
   port: number;
   tls?: {
     key: string;
-    cert: string;
+    cer: string;
   };
   shared: {
     paths: {
