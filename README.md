@@ -65,7 +65,7 @@
 
             - On doit trouver un moyen de pouvoir compiler du SCSS en CSS.
 
-        2) __.json__:
+        2)  ✔️ __.json__:
 
             ```
             ## file.json (raw) ##############
@@ -112,7 +112,7 @@
 
 
 
-        3) __.ts__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
+        3)  ✔️ __.ts__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
 
             ```
             ## main.ts (ts) ######################### main.ts (js: raw) ###############
@@ -131,7 +131,7 @@
 
             - On doit trouver un moyen de pouvoir transpiler du TypeScript en JavaScript.
 
-        4) __.{jsx,tsx}__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
+        4)  ✔️  __.{jsx,tsx}__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
 
             ```
             ## main.jsx ######################################## main.jsx (js: raw) ###############################
