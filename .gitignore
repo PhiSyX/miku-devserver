@@ -3,3 +3,6 @@
 
 *.unstage.*
 *.unstage
+
+config/tls/*
+!config/tls/README.md
