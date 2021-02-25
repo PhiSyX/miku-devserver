@@ -2,8 +2,9 @@
 
 ## Créer un exécutable :
 ```
-  deno install --allow-read --allow-net ./bin/miku-devserver.ts
+  deno install --unstable --allow-read --allow-net ./bin/miku-devserver.ts
 
+  --unstable est requis pour pouvoir générer du code typescript à la volé ;
   --allow-read est requis pour pouvoir lire ou créer des fichiers ;
   --allow-net est requis pour pouvoir créer un réseau ;
 ```

@@ -27,8 +27,6 @@ import { contentType } from "https://deno.land/x/media_types@v2.7.1/mod.ts";
 
 // My Modules
 
-import type { OBJECT } from "../packages/helpers/shared/types.d.ts";
-
 import { readFile } from "../packages/helpers/deno/fs.ts";
 
 import type {
@@ -36,16 +34,25 @@ import type {
   ConfigFileJSON,
 } from "../config/config_file.d.ts";
 
+import { serveEcmaScript } from "./serve_ecmascript.ts";
+
 export type ServerRequestContext = ServerRequest & { url: URL };
+export type ServerResponseContext = ServerResponse & {
+  filename?: string;
+  path?: string;
+};
 
 export interface ResponseRequest {
   raw: string;
   rawType: string;
 
+  source: string;
+  sourceType: string;
+
   status: number;
 }
 
-export async function createServer(/*mut*/ config: Partial<ConfigFileJSON>) {
+export function createServer(/*mut*/ config: Partial<ConfigFileJSON>) {
   if (!config.env) {
     config.env = "development";
   }
@@ -64,8 +71,8 @@ export async function createServer(/*mut*/ config: Partial<ConfigFileJSON>) {
   };
 
   if (config.tls) {
-    options.certFile = config.tls.cert;
-    options.keyFile = config.tls.cert;
+    options.certFile = config.tls.cer;
+    options.keyFile = config.tls.key;
   }
 
   listening(config as ConfigFileInterface);
@@ -86,18 +93,18 @@ function getURL(config: ConfigFileInterface) {
   const hostname = config.hostname;
 
   let /*mut*/ port = config.port.toFixed();
-  let /*mut*/ prefix_port = "";
+  let /*mut*/ prefixPort = "";
   if (port != "80" && port != "443") {
-    prefix_port = ":";
+    prefixPort = ":";
   } else {
     port = "";
   }
 
-  return `http${secure}://${hostname}${prefix_port}${port}/`;
+  return `http${secure}://${hostname}${prefixPort}${port}/`;
 }
 
 function listening(config: ConfigFileInterface) {
-  const url_str = getURL(config);
+  const urlStr = getURL(config);
 
   console.log(green("✔️"), "", "Le serveur web est lancé:");
 
@@ -105,7 +112,7 @@ function listening(config: ConfigFileInterface) {
     " ".repeat(2),
     blue("-"),
     "Les URL's accessibles via",
-    underline(url_str),
+    underline(urlStr),
     ":",
   );
 
@@ -140,10 +147,10 @@ function handleServerRequest(config: ConfigFileInterface) {
 }
 
 function defineRequest(config: ConfigFileInterface) {
-  const url_str = getURL(config);
+  const urlStr = getURL(config);
 
   return (request: ServerRequest): ServerRequestContext => {
-    const url = new URL(request.url, url_str);
+    const url = new URL(request.url, urlStr);
     return Object.assign(request, { url });
   };
 }
@@ -156,7 +163,23 @@ function handleRequest(config: ConfigFileInterface) {
       );
     }
 
-    const response = await sendResourceStatic(config)(request);
+    let response: ResponseRequest;
+
+    const {
+      nsKey,
+      nsVal,
+    } = getNamespace(config)(request.url.pathname);
+
+    if (nsKey && nsVal) {
+      response = await sendResourceDynamically(config, {
+        namespace: nsKey,
+        root: nsVal,
+      })(request);
+    } else {
+      response = await sendResourceStatically(config, {
+        namespace: "static",
+      })(request);
+    }
 
     const headers = new Headers();
     headers.set("X-Powered-By", `miku-devserver`);
@@ -173,28 +196,106 @@ function handleRequest(config: ConfigFileInterface) {
   };
 }
 
-function sendResourceStatic(config: ConfigFileInterface) {
+function sendResourceDynamically(config: ConfigFileInterface, options: {
+  namespace: string;
+  root: string;
+}) {
   return async (request: ServerRequestContext): Promise<ResponseRequest> => {
-    const { filename, status } = await getResource(config)(request);
+    const { filename, status } = await getResource(config, options)(request);
 
-    const raw = await readFile(filename);
+    const raw = await readFile(filename, "utf-8");
+    const rawType = extname(filename);
+
+    let response: ResponseRequest = {
+      raw,
+      rawType,
+
+      source: raw,
+      sourceType: rawType,
+
+      status,
+    };
+
+    switch (rawType) {
+      case ".js":
+      case ".jsx":
+      case ".ts":
+      case ".tsx":
+        response = {
+          ...response,
+          ...(await serveEcmaScript(config)(request, { filename, body: raw })),
+        };
+        break;
+    }
+
+    return response;
+  };
+}
+
+function sendResourceStatically(config: ConfigFileInterface, options: {
+  namespace: string;
+}) {
+  return async (request: ServerRequestContext): Promise<ResponseRequest> => {
+    const rootDir = config.shared?.paths[options.namespace];
+
+    const { filename, status } = await getResource(config, {
+      namespace: options.namespace,
+      root: rootDir,
+    })(
+      request,
+    );
+
+    const raw = await readFile(filename, "utf-8");
     const rawType = extname(filename);
 
     return {
       raw,
       rawType,
 
+      source: raw,
+      sourceType: rawType,
+
       status,
     };
   };
 }
 
+function getNamespace(config: ConfigFileInterface) {
+  const namespaces = config.shared.paths || {};
+  return (pathname: string) => {
+    let nsKey = null;
+    let nsVal = null;
+
+    for (const namespace in namespaces) {
+      if (namespace == "static") continue;
+
+      if (pathname.indexOf(`/${namespace}/`) >= 0) {
+        nsKey = namespace;
+        nsVal = namespaces[namespace];
+        break;
+      }
+    }
+
+    return {
+      nsKey,
+      nsVal,
+    };
+  };
+}
+
 // Retourne une resource existante ou un fichier 404 ;
-function getResource(config: ConfigFileInterface) {
+function getResource(
+  config: ConfigFileInterface,
+  options: {
+    namespace: string;
+    root: string;
+  },
+) {
   return async (request: ServerRequestContext) => {
     const index = "index.html";
 
-    let pathname = request.url.pathname;
+    let pathname = request.url.pathname
+      .replace(new RegExp(`^\/${options.namespace}`), "");
 
     // URL -> /test/
     if (pathname.slice(-1) === "/") {
@@ -203,35 +304,26 @@ function getResource(config: ConfigFileInterface) {
 
     // URL -> /test
     if (!/\.[\w]+$/.test(pathname)) {
-      pathname += "/" + index;
+      pathname += "\\" + index;
     }
 
-    let static_dir = config.shared?.paths.static
-      .replaceAll(/\/$/g, "");
+    const rootDir = options.root.replaceAll(/\/$/g, "");
+
+    const state = {
+      filename: await Deno.realPath("public/404.html"),
+      status: 404,
+    };
 
     try {
-      const state = {
-        filename: await Deno.realPath(static_dir + "/404.html"),
-        status: 404,
-      };
+      state.filename = await Deno.realPath(rootDir + pathname);
+      state.status = 200;
+    } catch { /* ? */ }
 
-      try {
-        state.filename = await Deno.realPath(static_dir + pathname);
-        state.status = 200;
-      } catch {}
-
-      return state;
-    } catch {
-      let failed_directory = Deno.cwd() + "\\" + static_dir;
-
-      throw new Error(
-        `Vérifie que le chemin de \`shared.paths.static\` est le bon: "${failed_directory}".`,
-      );
-    }
+    return state;
   };
 }
 
-const sendResponse = async (
+const sendResponse = (
   ctx: ServerRequestContext,
   response: ServerResponse,
 ) => {
