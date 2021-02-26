@@ -47,12 +47,12 @@ export type ServerResponseContext = ServerResponse & {
 
 export interface ResponseRequest {
   raw: string;
+  rawStatus: number;
   rawType: string;
 
   source: string;
+  sourceStatus: number;
   sourceType: string;
-
-  status: number;
 
   mtime: Date;
 }
@@ -213,14 +213,16 @@ function handleRequest(config: ConfigFileInterface) {
         : <string> contentType(response.sourceType),
     );
 
-    if (response.status === 301) {
+    if (response.rawStatus === 301) {
       // TODO: améliorer cette partie
       headers.set("Location", request.url.pathname + "/");
     }
 
     sendResponse(request, {
       body: !isImportRequest(request) ? response.raw : response.source,
-      status: response.status,
+      status: !isImportRequest(request)
+        ? response.rawStatus
+        : response.sourceStatus,
       headers,
     });
   };
@@ -245,17 +247,33 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
       }
     }
 
-    const raw = await readFile(filename, "utf-8");
+    let raw = "";
+    let rawStatus = status;
+    let sourceStatus = status;
+
+    try {
+      raw = await readFile(filename, "utf-8");
+    } catch (e) {
+      console.error();
+      console.group(filename, ":");
+      console.error(e);
+      console.groupEnd();
+      console.error();
+      raw = "PARSE_ERROR : " + e.message;
+      rawStatus = 500;
+      sourceStatus = 202;
+    }
+
     const rawType = extname(filename);
 
     let response: ResponseRequest = {
       raw,
+      rawStatus,
       rawType,
 
       source: raw,
+      sourceStatus,
       sourceType: rawType,
-
-      status,
 
       mtime: stats.mtime as Date,
     };

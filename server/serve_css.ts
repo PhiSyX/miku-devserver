@@ -15,7 +15,7 @@ export function serveCss(_config: ConfigFileInterface) {
   return async (
     request: ServerRequestContext,
     response: ServerResponseContext,
-  ): Promise<Omit<ResponseRequest, "status" | "mtime">> => {
+  ): Promise<Omit<ResponseRequest, "mtime">> => {
     const { filename, body } = <Required<ServerResponseContext>> response;
 
     const uniqID = JSON.stringify(
@@ -31,18 +31,46 @@ export function serveCss(_config: ConfigFileInterface) {
 
     await init(wasmSource);
 
-    const raw = sassCompile(`${body}`, {});
+    let raw = "";
+    let rawStatus = 500;
 
-    const source = `
-    import { updateStyleDom } from "/~/dom.ts";
-    updateStyleDom(${uniqID}, "${request.url.pathname}?t=${Date.now()}");
-    `;
+    let source = raw;
+    let sourceStatus = 202;
+
+    try {
+      raw = sassCompile(`${body}`, {});
+      rawStatus = 200;
+
+      source = `
+      import { updateStyleDom } from "/~/dom.ts";
+      updateStyleDom(${uniqID}, "${request.url.pathname}?t=${Date.now()}");
+      `;
+      sourceStatus = 200;
+    } catch (e) {
+      console.error();
+      console.group(filename, ":");
+      console.error(e);
+      console.groupEnd();
+      console.error();
+
+      const msg = `${e.name} - ${e.message}: ${request.url.pathname}
+
+        the code source is hidden because it contains a syntax error ;
+        fix it, if you are the administrator of this server.
+      `;
+
+      source = [
+        `console.error("[rust]", \`${msg}\`);`,
+      ].join("\n");
+    }
 
     return {
       raw,
       rawType: ".css",
       source,
       sourceType: ".js",
+      rawStatus,
+      sourceStatus,
     };
   };
 }
