@@ -12,10 +12,46 @@
 </head>
 
 <body>
-  <div id="client-js-app"></div>
+  <div id="client-js-app">
+    <p>Cette page existe que pour la configuration d'exemple : <code>config/config_example.json</code>.</p>
 
-  <!-- <script type="module" src="/client/main.js"></script> -->
-  <script type="module" src="/client/main.jsx"></script>
+    <p>
+      Le contenu de cette page ne s'est pas correctement affiché.
+    </p>
+
+    <p>
+      Pourquoi ?
+
+      <br>
+
+      Cette page contient un script menant à la destination du répertoire <code class="hl">client/</code>. <br>
+      Le fichier de configuration qu'exécute actuellement le serveur ne contient pas la destination du répertoire
+      <code class="hl">client/</code> ; il faut donc la définir dans votre fichier de configuration :
+      <code>config/your_config_file.json</code>.
+
+      <br>
+      <br>
+
+      Le fichier de configuration par défaut est située ici : <code>config/config_default.json</code> ; <br>
+
+      La configuration qui permettrait de faire fonctionner cette page correctement est :
+    <pre>
+{
+  ...
+  "shared": {
+    "paths": {
+      ...
+      "static": <code class="hl">"public/"</code>,
+      "client": <code class="hl">"client/"</code>
+    }
+  },
+  ...
+}
+</pre>
+    </p>
+  </div>
+
+  <script type="module" src="/client/main.js"></script>
 </body>
 
 </html>

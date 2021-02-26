@@ -177,9 +177,9 @@ function defineRequest(config: ConfigFileInterface) {
 
 function handleRequest(config: ConfigFileInterface) {
   return async (request: ServerRequestContext) => {
-    if (!config.shared || !config.shared?.paths?.static) {
+    if (!config.shared || !config.shared?.paths) {
       throw new Error(
-        "Tu dois définir une propriété `shared.paths.static` dans ton fichier de configuration ; réfère-toi à la configuration par défaut (config/config_default.json) pour mieux visualiser comment la définir.",
+        "Tu dois définir une propriété `shared.paths` dans ton fichier de configuration ; réfère-toi à la configuration par défaut (config/config_default.json) pour mieux visualiser comment la définir.",
       );
     }
 
@@ -209,6 +209,11 @@ function handleRequest(config: ConfigFileInterface) {
         ? <string> contentType(response.rawType)
         : <string> contentType(response.sourceType),
     );
+
+    if (response.status === 301) {
+      // TODO: améliorer cette partie
+      headers.set("Location", request.url.pathname + "/");
+    }
 
     sendResponse(request, {
       body: !isImportRequest(request) ? response.raw : response.source,
@@ -256,7 +261,7 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
       case ".json":
         response = {
           ...response,
-          ...(await serveJson(config)(request, { filename, body: raw })),
+          ...(serveJson(config)(request, { filename, body: raw })),
         };
         break;
 
@@ -330,7 +335,9 @@ function getNamespace(config: ConfigFileInterface) {
     for (const namespace in namespaces) {
       if (namespace == "static") continue;
 
-      if (pathname.indexOf(`/${namespace}/`) >= 0) {
+      if (
+        pathname.indexOf(`/${namespace}/`) >= 0 || pathname === `/${namespace}`
+      ) {
         nsKey = namespace;
         nsVal = namespaces[namespace];
         break;
@@ -352,11 +359,15 @@ function getResource(
     root: string;
   },
 ) {
-  return async (request: ServerRequestContext) => {
+  return async (
+    request: ServerRequestContext,
+  ): Promise<{ filename: string; status: number }> => {
     const index = "index.html";
 
     let pathname = request.url.pathname
       .replace(new RegExp(`^\/${options.namespace}`), "");
+
+    const rootDir = (options.root || "").replaceAll(/\/$/g, "");
 
     // URL -> /test/
     if (pathname.slice(-1) === "/") {
@@ -364,20 +375,20 @@ function getResource(
     }
 
     // URL -> /test
+    let redirectTo = false;
     if (!/\.[\w]+$/.test(pathname)) {
       pathname += "\\" + index;
+      redirectTo = true;
     }
 
-    const rootDir = options.root.replaceAll(/\/$/g, "");
-
     const state = {
-      filename: await Deno.realPath("public/404.html"),
+      filename: await Deno.realPath("server/web/404.html"),
       status: 404,
     };
 
     try {
       state.filename = await Deno.realPath(rootDir + pathname);
-      state.status = 200;
+      state.status = redirectTo ? 301 : 200;
     } catch { /* ? */ }
 
     return state;
