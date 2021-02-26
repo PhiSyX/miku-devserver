@@ -63,30 +63,33 @@ function ClientApp() {
       h(
         "p",
         null,
-        "La destination de ce répertoire est définie dans la configuration du fichier `./config/config_default.json`",
+        "La destination de ce répertoire est définie dans la configuration du fichier `./config/config_example.json`",
         h(
           "pre",
           null,
           "shared.paths.",
-          h("code", { className: "hl" }, "static"),
+          h("code", { className: "hl" }, "client"),
         ),
       ),
       h(
         "pre",
         null,
-        "$ cat ./config/config_default.json",
+        "$ cat ./config/config_example.json",
         h(
           "code",
           null,
           `
 
 {
-  "env": "development",
+  ...
   "shared": {
     "paths": {
+      ...
       `,
-          h("code", { class: "hl" }, `"static"`),
-          `: "public/"
+          h("code", { class: "hl" }, `"client"`),
+          `: `,
+          h("code", { class: "hl" }, `"client/"`),
+          `
     }
   }
 }`,

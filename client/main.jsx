@@ -53,23 +53,24 @@ function ClientApp() {
 
       <p>
         La destination de ce répertoire est définie dans la configuration du
-        fichier `./config/config_default.json`
+        fichier `./config/config_example.json`
         <pre>
-          shared.paths.<code className="hl">static</code>
+          shared.paths.<code className="hl">client</code>
         </pre>
       </p>
 
       <pre>
-        $ cat ./config/config_default.json
+        $ cat ./config/config_example.json
         {"\n\n"}
 
         <code
           dangerouslySetInnerHTML={{
             __html: `{
-  "env": "development",
+  ...
   "shared": {
     "paths": {
-      <code class="hl">"static"</code>: "public/"
+      ...
+      <code class="hl">"client"</code>: <code class="hl">"client/"</code>
     }
   }
 }`,
