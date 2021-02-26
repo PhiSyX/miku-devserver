@@ -35,6 +35,7 @@ import type {
 } from "../config/config_file.d.ts";
 
 import { cache } from "./memory_cache.ts";
+import { serveCss } from "./serve_css.ts";
 import { serveJson } from "./serve_json.ts";
 import { serveEcmaScript } from "./serve_ecmascript.ts";
 
@@ -183,6 +184,8 @@ function handleRequest(config: ConfigFileInterface) {
       );
     }
 
+    config.shared.paths["~"] = "server/web";
+
     let response: ResponseRequest;
 
     const {
@@ -258,6 +261,14 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
     };
 
     switch (rawType) {
+      case ".css":
+      case ".scss":
+        response = {
+          ...response,
+          ...(await serveCss(config)(request, { filename, body: raw })),
+        };
+        break;
+
       case ".json":
         response = {
           ...response,

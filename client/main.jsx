@@ -2,6 +2,7 @@ import { h, render } from "https://cdn.skypack.dev/preact";
 import { useEffect, useState } from "https://cdn.skypack.dev/preact/hooks";
 
 import fileJSON from "./file.json";
+import "./main.scss";
 
 const $el$html = document.documentElement;
 
@@ -79,7 +80,10 @@ function ClientApp() {
   );
 }
 
+const $clientApp = document.getElementById("client-js-app");
+$clientApp.innerHTML = "";
+
 render(
-  h(ClientApp),
-  document.getElementById("client-js-app"),
+  <ClientApp />,
+  $clientApp,
 );

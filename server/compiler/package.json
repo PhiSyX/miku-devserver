@@ -1,0 +1,16 @@
+{
+  "name": "miku-devserver",
+  "collaborators": [
+    "PhiSyX <738010+PhiSyX@users.noreply.github.com>"
+  ],
+  "version": "0.1.0",
+  "license": "MIT",
+  "files": [
+    "compiler_bg.wasm",
+    "compiler.js",
+    "compiler.d.ts"
+  ],
+  "module": "compiler.js",
+  "types": "compiler.d.ts",
+  "sideEffects": false
+}

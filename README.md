@@ -26,7 +26,7 @@
         Les fichiers de ce répertoire ne seront pas évalués par les points suivants ;
 
     2)  Lors d'une requête HTTP, dont le __chemin__ de l'adresse se termine par :
-        1) __.scss__: renvoi du code SCSS compilé, donc en du code CSS ;
+        1)  ✔️ __.scss__: renvoi du code SCSS compilé, donc en du code CSS ;
 
             ```
             ## style.scss (scss) #################### style.scss (css: raw) ########
@@ -43,27 +43,30 @@
               on doit alors générer du code JavaScript ;
 
               ```
-              ## style.scss (raw) ######################################################################
-              #                                                                                        #
-              # ```css                                                                                 #
-              #   body { background: #000; }                                                           #
-              # ```                                                                                    #
-              #                                                                                        #
-              ## main.js ######################## style.scss (js) ######################################
-              #                           |    |                                                       #
-              # ```js                     | -> | ```js                                                 #
-              #   import "./style.scss";  |    |   import { update_style_dom } from "miku-devserver";  #
-              #   // ...code              |    |   update_style_dom("file-id", "./style.scss?raw");    #
-              # ```                       | -> | ```                                                   #
-              #                           |    |                                                       #
-              #################################################################################### DOM #
-              #                                                                                        #
-              # <link id="miku-css-file-id" rel="stylesheet" type="text/css" href="./style.scss">      #
-              #                                                                                        #
-              ##########################################################################################
+              ## style.scss (raw) ####################################################################
+              #                                                                                      #
+              # ```css                                                                               #
+              #   body { background: #000; }                                                         #
+              # ```                                                                                  #
+              #                                                                                      #
+              ## main.js ######################## style.scss (js) ####################################
+              #                           |    |                                                     #
+              # ```js                     | -> | ```js                                               #
+              #   import "./style.scss";  |    |   import { updateStyleDom } from "miku-devserver";  #
+              #   // ...code              |    |   updateStyleDom("file-id", "./style.scss?raw");    #
+              # ```                       | -> | ```                                                 #
+              #                           |    |                                                     #
+              ################################################################################## DOM #
+              #                                                                                      #
+              # <link id="miku-css-file-id" rel="stylesheet" type="text/css" href="./style.scss">    #
+              #                                                                                      #
+              ########################################################################################
               ```
 
             - On doit trouver un moyen de pouvoir compiler du SCSS en CSS.
+              ```
+              wasm-pack build --target web --release --out-dir "server/compiler" --out-name "compiler"
+              ```
 
         2)  ✔️ __.json__:
 
@@ -147,34 +150,34 @@
         5) __.vue__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
 
             ```
-            ## MyComponent.vue ########################################## MyComponent.vue (js: raw) ##############################################
-            #                                                     |    |                                                                         #
-            # ```vue                                              | -> | ```js                                                                   #
-            #   <template>                                        |    |   import { ref } from "vue";                                            #
-            #     <button @click="add_one">Add +1</button>        |    |   import DOMPurify from "dompurify";                                    #
-            #     <button @click="add_two">Add +2</button>        |    |   import { add_style_dom } from "miku-devserver";                       #
-            #                                                     |    |                                                                         #
-            #     <div>i64_value = {{ i64_value }};</div>         |    |   const file_id = "Unique-ID";                                          #
-            #     <div v-html="html_value" />                     |    |   const stylesheet = add_style_dom(file_id, `button { color: red; }`);  #
-            #   </template>                                       |    |                                                                         #
-            #                                                     | -> |   export function MyComponent(props) {                                  #
-            #   <script>                                          |    |     const i64_value = ref(0);                                           #
-            #     import { ref } from "vue";                      |    |     const html_value = "<strong>ok</strong>";                           #
-            #                                                     |    |                                                                         #
-            #     const i64_value = ref(0);                       |    |     const add_one = (evt) => i64_value.value += 1;                      #
-            #     const html_value = "<strong>ok</strong>";       |    |     const add_two = (evt) => i64_value.value += 2;                      #
-            #                                                     |    |                                                                         #
-            #     const add_one = (evt) => i64_value.value += 1;  | -> |     return h(                                                           #
-            #     const add_two = (evt) => i64_value.value += 2;  |    |       Fragment, null,                                                   #
-            #   </script>                                         |    |         h("button", { onClick: add_one }, "Add +1"),                    #
-            #                                                     |    |         h("button", { onClick: add_two }, "Add +2"),                    #
-            #   <style>                                           |    |         h("div", null, "i64_value = ", i64_value.value, ";"),           #
-            #   button { color: red; }                            |    |         h("div", { html: DOMPurify.sanitize(html_value) })              #
-            #   </style>                                          |    |      );                                                                 #
-            # ```                                                 |    |   }                                                                     #
-            #                                                     | -> | ```                                                                     #
-            #                                                     |    |                                                                         #
-            ######################################################################################################################################
+            ## MyComponent.vue ########################################## MyComponent.vue (js: raw) ############################################
+            #                                                     |    |                                                                       #
+            # ```vue                                              | -> | ```js                                                                 #
+            #   <template>                                        |    |   import { ref } from "vue";                                          #
+            #     <button @click="add_one">Add +1</button>        |    |   import DOMPurify from "dompurify";                                  #
+            #     <button @click="add_two">Add +2</button>        |    |   import { addStyleDom } from "miku-devserver";                       #
+            #                                                     |    |                                                                       #
+            #     <div>i64_value = {{ i64_value }};</div>         |    |   const file_id = "Unique-ID";                                        #
+            #     <div v-html="html_value" />                     |    |   const stylesheet = addStyleDom(file_id, `button { color: red; }`);  #
+            #   </template>                                       |    |                                                                       #
+            #                                                     | -> |   export function MyComponent(props) {                                #
+            #   <script>                                          |    |     const i64_value = ref(0);                                         #
+            #     import { ref } from "vue";                      |    |     const html_value = "<strong>ok</strong>";                         #
+            #                                                     |    |                                                                       #
+            #     const i64_value = ref(0);                       |    |     const add_one = (evt) => i64_value.value += 1;                    #
+            #     const html_value = "<strong>ok</strong>";       |    |     const add_two = (evt) => i64_value.value += 2;                    #
+            #                                                     |    |                                                                       #
+            #     const add_one = (evt) => i64_value.value += 1;  | -> |     return h(                                                         #
+            #     const add_two = (evt) => i64_value.value += 2;  |    |       Fragment, null,                                                 #
+            #   </script>                                         |    |         h("button", { onClick: add_one }, "Add +1"),                  #
+            #                                                     |    |         h("button", { onClick: add_two }, "Add +2"),                  #
+            #   <style>                                           |    |         h("div", null, "i64_value = ", i64_value.value, ";"),         #
+            #   button { color: red; }                            |    |         h("div", { html: DOMPurify.sanitize(html_value) })            #
+            #   </style>                                          |    |      );                                                               #
+            # ```                                                 |    |   }                                                                   #
+            #                                                     | -> | ```                                                                   #
+            #                                                     |    |                                                                       #
+            ####################################################################################################################################
             ```
 
     3)  Lors d'une requête HTTP, n'importer que les ressources (js, css,...) dont la page a besoin (tree shaking);
