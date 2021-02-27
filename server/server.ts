@@ -205,7 +205,12 @@ function handleRequest(config: ConfigFileInterface) {
     }
 
     const headers = new Headers();
-    headers.set("X-Powered-By", `miku-devserver`);
+
+    headers.set("referrer-policy", "strict-origin-when-cross-origin");
+    headers.set("x-content-type-options", "nosniff");
+    headers.set("x-frame-options", "sameorigin");
+    headers.set("x-xss-protection", "1; mode=block");
+
     headers.set(
       "Content-Type",
       !isImportRequest(request)
