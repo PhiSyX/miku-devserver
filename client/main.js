@@ -1,5 +1,5 @@
-import { h, render } from "https://cdn.skypack.dev/preact";
-import { useEffect, useState } from "https://cdn.skypack.dev/preact/hooks";
+import { h, render } from "preact";
+import { useEffect, useState } from "preact/hooks";
 
 import fileJSON from "./file.json";
 import "./main.scss";

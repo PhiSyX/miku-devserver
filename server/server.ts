@@ -70,6 +70,12 @@ export function createServer(/*mut*/ config: Partial<ConfigFileJSON>) {
     config.port = 8000;
   }
 
+  if (!config.alias) {
+    config.alias = {};
+  }
+
+  config.alias["miku-devserver"] = "/~/index.ts";
+
   const options: Partial<Deno.ListenTlsOptions> = {
     hostname: config.hostname,
     port: config.port,

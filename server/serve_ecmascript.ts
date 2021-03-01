@@ -1,5 +1,12 @@
 import type { ConfigFileInterface } from "../config/config_file.d.ts";
 
+import {
+  ALIAS_DYN_IMPORT_RE,
+  ALIAS_IMPORT_RE,
+  aliasDynImport,
+  aliasImport,
+} from "./alias.ts";
+
 import type {
   ResponseRequest,
   ServerRequestContext,
@@ -13,7 +20,7 @@ export function serveEcmaScript(config: ConfigFileInterface) {
   ): Promise<Omit<ResponseRequest, "mtime">> => {
     const { filename, body } = response;
 
-    const raw = "";
+    let raw = "";
     let rawStatus = 500;
 
     let source = raw;
@@ -21,11 +28,18 @@ export function serveEcmaScript(config: ConfigFileInterface) {
     const sourceType = ".js";
 
     try {
+      raw = `${body}`.replaceAll(
+        ALIAS_IMPORT_RE,
+        aliasImport(config.alias || {}),
+      ).replaceAll(
+        ALIAS_DYN_IMPORT_RE,
+        aliasDynImport(config.alias || {}),
+      );
       const output = await Deno.emit(
         request.url.pathname,
         {
           sources: {
-            [request.url.pathname]: `${body}`,
+            [request.url.pathname]: raw,
           },
           compilerOptions: {
             strict: true,

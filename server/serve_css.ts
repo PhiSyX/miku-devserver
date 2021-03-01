@@ -1,9 +1,10 @@
 import { encode } from "https://deno.land/std@0.88.0/encoding/base64.ts";
 import { Sha1 } from "https://deno.land/std@0.88.0/hash/sha1.ts";
 
-import init, { sass_compile as sassCompile } from "./compiler/compiler.js";
-
 import type { ConfigFileInterface } from "../config/config_file.d.ts";
+
+import init, { sass_compile as sassCompile } from "./compiler/compiler.js";
+import { ALIAS_IMPORT_RE, aliasImport } from "./alias.ts";
 
 import type {
   ResponseRequest,
@@ -11,7 +12,7 @@ import type {
   ServerResponseContext,
 } from "./server.ts";
 
-export function serveCss(_config: ConfigFileInterface) {
+export function serveCss(config: ConfigFileInterface) {
   return async (
     request: ServerRequestContext,
     response: ServerResponseContext,
@@ -42,9 +43,9 @@ export function serveCss(_config: ConfigFileInterface) {
       rawStatus = 200;
 
       source = `
-      import { updateStyleDom } from "/~/dom.ts";
+      import { updateStyleDom } from "miku-devserver";
       updateStyleDom(${uniqID}, "${request.url.pathname}?t=${Date.now()}");
-      `;
+      `.replaceAll(ALIAS_IMPORT_RE, aliasImport(config.alias || {}));
       sourceStatus = 200;
     } catch (e) {
       console.error();

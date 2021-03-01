@@ -12,5 +12,9 @@
       "client": "client/"
     }
   },
-  "cache": true
+  "cache": true,
+  "alias": {
+    "preact": "https://cdn.skypack.dev/preact",
+    "preact/hooks": "https://cdn.skypack.dev/preact/hooks"
+  }
 }

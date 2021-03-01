@@ -17,4 +17,7 @@ export interface ConfigFileInterface {
     };
   };
   cache?: boolean;
+  alias?: {
+    [p: string]: string;
+  };
 }
