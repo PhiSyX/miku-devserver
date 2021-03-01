@@ -18,6 +18,11 @@
   # or miku-devserver.cmd
 ```
 
+### Lancer les tests
+```
+  deno --unstable test --allow-read server/*_test.ts
+```
+
 ## ROADMAP
 1) Créer un serveur HTTP configurable.
 
