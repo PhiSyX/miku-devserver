@@ -46,6 +46,7 @@ export function serveEcmaScript(config: ConfigFileInterface) {
             sourceMap: false,
             jsx: "react",
             jsxFactory: "h",
+            jsxFragmentFactory: "Fragment",
             removeComments: true,
             target: "es2020",
           },
