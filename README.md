@@ -152,7 +152,7 @@
             #######################################################################################################
             ```
 
-        5) __.vue__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
+        5)  ✔️  __.vue__: renvoi du code TypeScript transpilé, donc en du code JavaScript ;
 
             ```
             ## MyComponent.vue ########################################## MyComponent.vue (js: raw) ############################################
