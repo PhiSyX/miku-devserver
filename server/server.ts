@@ -38,6 +38,7 @@ import { cache } from "./memory_cache.ts";
 import { serveCss } from "./serve_css.ts";
 import { serveJson } from "./serve_json.ts";
 import { serveEcmaScript } from "./serve_ecmascript.ts";
+import { serveVue } from "./serve_vue.ts";
 
 export type ServerRequestContext = ServerRequest & { url: URL };
 export type ServerResponseContext = ServerResponse & {
@@ -312,6 +313,13 @@ function sendResourceDynamically(config: ConfigFileInterface, options: {
         response = {
           ...response,
           ...(await serveEcmaScript(config)(request, { filename, body: raw })),
+        };
+        break;
+
+      case ".vue":
+        response = {
+          ...response,
+          ...(await serveVue(config)(request, { filename, body: raw })),
         };
         break;
     }

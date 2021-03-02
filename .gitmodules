@@ -1,3 +1,7 @@
 [submodule "packages/helpers"]
 	path = packages/helpers
 	url = https://github.com/PhiSyX/helpers
+
+[submodule "packages/wasm-scraper"]
+	path = packages/wasm-scraper
+	url = https://github.com/julleboi/fast-wasm-scraper

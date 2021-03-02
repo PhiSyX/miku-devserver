@@ -1,7 +1,6 @@
 import { h, render } from "preact";
 import { useEffect, useState } from "preact/hooks";
 
-import fileJSON from "./file.json";
 import "./main.scss";
 
 const $el$html = document.documentElement;
@@ -11,10 +10,6 @@ const LIGHT = "light";
 
 function ClientApp() {
   const [theme, setTheme] = useState(DARK);
-
-  console.log(fileJSON);
-
-  import("preact").then(console.log);
 
   /**
    * Change la couleur du thème ;

@@ -16,6 +16,7 @@ crate-type = ["cdylib"]
 grass = { version = "^0.10.4" }
 wasm-bindgen = { version = "^0.2.70", features = ["serde-serialize"] }
 wee_alloc = { version = "^0.4.5", optional = true  }
+fast-wasm-scraper = { path = "./packages/wasm-scraper" }
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false

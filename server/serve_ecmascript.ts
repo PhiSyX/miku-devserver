@@ -20,6 +20,8 @@ export function serveEcmaScript(config: ConfigFileInterface) {
   ): Promise<Omit<ResponseRequest, "mtime">> => {
     const { filename, body } = response;
 
+    const pathname = request.url.pathname.replaceAll(".vue", ".jsx");
+
     let raw = "";
     let rawStatus = 500;
 
@@ -36,10 +38,10 @@ export function serveEcmaScript(config: ConfigFileInterface) {
         aliasDynImport(config.alias || {}),
       );
       const output = await Deno.emit(
-        request.url.pathname,
+        pathname,
         {
           sources: {
-            [request.url.pathname]: raw,
+            [pathname]: raw,
           },
           compilerOptions: {
             strict: true,
