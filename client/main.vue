@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main style="padding: 8px; border-radius: 4px">
     <header>
       <h1>It Works !</h1>
 
@@ -9,28 +9,18 @@
         <cite>miku-devserver</cite>
       </p>
 
-      <p>
-        Crée le <time datetime="2021-02-25">25 Février 2021</time>
-      </p>
+      <p>Crée le <time datetime="2021-02-25">25 Février 2021</time></p>
 
       <label class="theme">
-        {{ LIGHT }}
+        {{ LIGHT.toUpperCase() }}
         <input
           type="checkbox"
           :checked="isChecked"
           @change="handleChangeInputCheckbox"
         />
-        {{ DARK }}
+        {{ DARK.toUpperCase() }}
       </label>
     </header>
-
-    <p>
-      La destination de ce répertoire est définie dans la configuration du
-      fichier `./config/config_example.json`
-      <pre>
-        shared.paths.<code class="hl">client</code>
-      </pre>
-    </p>
   </main>
 </template>
 
@@ -71,6 +61,6 @@ useLayoutEffect(() => {
 
 <style>
 main {
-  background: green !important;
+  background: var(--pre_bg) !important;
 }
 </style>

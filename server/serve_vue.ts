@@ -21,13 +21,6 @@ import init, {
 import { serveCss } from "./serve_css.ts";
 import { serveEcmaScript } from "./serve_ecmascript.ts";
 
-import {
-  ALIAS_DYN_IMPORT_RE,
-  ALIAS_IMPORT_RE,
-  aliasDynImport,
-  aliasImport,
-} from "./alias.ts";
-
 export function serveVue(config: ConfigFileInterface) {
   return async (
     request: ServerRequestContext,
@@ -138,7 +131,7 @@ function updateAttribute$interpolation(template: string): string {
 function updateAttribute$vBIND(template: string): string {
   return template
     .replace(/v-bind="([^"]+)"/g, "{ ...$1 }")
-    .replace(/([:@])([^=]+)="([^"]+)"/g, function (_, $1, $2, $3) {
+    .replace(/\s([:@])([^=]+)="([^"]+)"/g, function (_, $1, $2, $3) {
       let temp = "";
 
       if ($1 === "@") {
@@ -147,7 +140,7 @@ function updateAttribute$vBIND(template: string): string {
         temp = `${$2}={${$3}}`;
       }
 
-      return temp;
+      return " " + temp;
     });
 }
 /**
