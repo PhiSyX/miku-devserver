@@ -1,5 +1,5 @@
-import { encode } from "https://deno.land/std@0.88.0/encoding/base64.ts";
-import { Sha1 } from "https://deno.land/std@0.88.0/hash/sha1.ts";
+import { encode } from "https://deno.land/std@0.89.0/encoding/base64.ts";
+import { Sha1 } from "https://deno.land/std@0.89.0/hash/sha1.ts";
 
 import type { Nullable, OBJECT } from "../packages/helpers/shared/types.d.ts";
 import type { ConfigFileInterface } from "../config/config_file.d.ts";
