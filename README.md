@@ -187,7 +187,7 @@
 
     3)  Lors d'une requête HTTP, n'importer que les ressources (js, css,...) dont la page a besoin (tree shaking);
 
-2) Créer un système de rechargement de module à chaud (HMR) configurable ;
+2)  ✔️ Créer un système de rechargement de module à chaud (HMR) ;
 
     1) Créer une connexion entre le serveur et le client en utilisant WebSocket ou Server-Sent Events ;
 
