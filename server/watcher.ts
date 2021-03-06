@@ -13,7 +13,10 @@ export function watcher(paths: string | string[]) {
 
       const fullPath = event.paths[0];
       const ts = Date.now();
-      const path = fullPath.replace(Deno.cwd() + "\\", "/") + "?t=" + ts;
+      const path = (
+        fullPath.replace(Deno.cwd() + "\\", "/")
+      ).replaceAll("\\", "/") + "?t=" + ts;
+
       const prevTime = times.get(fullPath);
       const uuid = (new Sha1()).update(fullPath.replaceAll("/", "\\"))
         .toString();
@@ -24,7 +27,15 @@ export function watcher(paths: string | string[]) {
         switch (ext) {
           case ".css":
           case ".scss":
-            action = "style-update";
+            action = "link-update";
+            break;
+
+          case ".js":
+          case ".jsx":
+          case ".ts":
+          case ".tsx":
+          case ".vue":
+            action = "script-update";
             break;
         }
 

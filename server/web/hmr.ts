@@ -1,4 +1,4 @@
-import { updateStyleDom } from "./dom.ts";
+import { updateLinkDom, updateScriptDom } from "./dom.ts";
 
 export function hmr() {
   const useTls = (location.protocol === "https:" ? "s" : "");
@@ -14,8 +14,12 @@ export function hmr() {
     const { uuid, path } = parsedData;
 
     switch (parsedData.action) {
-      case "style-update":
-        updateStyleDom(uuid, path);
+      case "link-update":
+        updateLinkDom(uuid, path);
+        break;
+
+      case "script-update":
+        updateScriptDom(uuid, path);
         break;
 
       case "full-reload":

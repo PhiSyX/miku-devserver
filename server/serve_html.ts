@@ -1,3 +1,5 @@
+import { Sha1 } from "https://deno.land/std@0.89.0/hash/sha1.ts";
+
 import type { ConfigFileInterface } from "../config/config_file.d.ts";
 
 import type {
@@ -15,7 +17,7 @@ import {
 
 export function serveHtml(config: ConfigFileInterface) {
   return (
-    _request: ServerRequestContext,
+    request: ServerRequestContext,
     response: ServerResponseContext,
   ): Pick<
     ResponseRequest,
@@ -33,6 +35,7 @@ export function serveHtml(config: ConfigFileInterface) {
         "</head>",
       ].join("\n"),
     )
+      .replaceAll(/(href|src)="([^"]+)"/gi, handleSource(request))
       .replaceAll(
         ALIAS_IMPORT_RE,
         aliasImport(config.alias || {}),
@@ -45,5 +48,32 @@ export function serveHtml(config: ConfigFileInterface) {
       raw,
       source: raw,
     };
+  };
+}
+
+function handleSource(request: ServerRequestContext) {
+  return (all: string, attr: string, src: string): string => {
+    let url = request.url.href;
+    if (url.endsWith(".html")) {
+      url = url.replace(/^(http.+)(\/.+.html)$/, "$1");
+    }
+
+    if (src.startsWith("/")) {
+      url = request.url.origin + src;
+    } else if (src.startsWith(".")) {
+      url += "/" + src;
+    }
+
+    url = url
+      .replaceAll(/\/[.]{1,}\//g, "/") // -> /../ | /./
+      .replaceAll(/(?<![:])\/\//g, "/") // -> //main.jsx -> /main.jsx
+      .replace(request.url.origin, "");
+
+    const uuid = (new Sha1()).update(
+      (Deno.cwd() + url).replaceAll("/", "\\"),
+    )
+      .toString();
+
+    return `id="miku-uid-${uuid}" ${attr}="${url}"`;
   };
 }

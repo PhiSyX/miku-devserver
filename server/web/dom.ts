@@ -3,12 +3,12 @@
 /* eslint-disable */
 
 export function addStyleDom(id: string, source: string) {
-  const styleId = `miku-style-${id}`;
+  const styleID = `miku-style-${id}`;
 
-  let $style = document.getElementById(styleId);
+  let $style = document.getElementById(styleID);
   if (!$style) {
     $style = document.createElement("style");
-    $style.id = styleId;
+    $style.id = styleID;
     $style.setAttribute("type", "text/css");
 
     document.head.appendChild($style);
@@ -17,18 +17,42 @@ export function addStyleDom(id: string, source: string) {
   $style.textContent = source;
 }
 
-export function updateStyleDom(id: string, url: string) {
-  const linkId = `miku-css-${id}`;
-
-  let $link = document.getElementById(linkId);
+export function addLinkDom(id: string, url: string) {
+  const linkID = `miku-uid-${id}`;
+  let $link = document.getElementById(linkID);
   if (!$link) {
     $link = document.createElement("link");
-    $link.id = linkId;
+    $link.id = linkID;
     $link.setAttribute("rel", "stylesheet");
     $link.setAttribute("type", "text/css");
-
     document.head.appendChild($link);
   }
-
   $link.setAttribute("href", url);
+}
+
+export function updateLinkDom(id: string, url: string) {
+  const linkID = `miku-uid-${id}`;
+  let $link = document.getElementById(linkID);
+  if ($link) {
+    $link.setAttribute("rel", "stylesheet");
+    $link.setAttribute("type", "text/css");
+    $link.setAttribute("href", url);
+  }
+}
+
+export function updateScriptDom(id: string, url: string) {
+  const scriptID = `miku-uid-${id}`;
+
+  let $script = document.getElementById(scriptID);
+  if ($script) {
+    let type = $script.getAttribute("type");
+    $script.remove();
+
+    $script = document.createElement("script");
+    $script.id = scriptID;
+    $script.setAttribute("type", type || "module");
+    $script.setAttribute("src", url);
+
+    document.body.appendChild($script);
+  }
 }

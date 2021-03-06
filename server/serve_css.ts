@@ -43,8 +43,8 @@ export function serveCss(config: ConfigFileInterface) {
       rawStatus = 200;
 
       source = `
-      import { updateStyleDom } from "miku-devserver";
-      updateStyleDom(${uniqID}, "${request.url.pathname}?t=${Date.now()}");
+      import { addLinkDom } from "miku-devserver";
+      addLinkDom(${uniqID}, "${request.url.pathname}?t=${Date.now()}");
       `.replaceAll(ALIAS_IMPORT_RE, aliasImport(config.alias || {}));
       sourceStatus = 200;
     } catch (e) {
