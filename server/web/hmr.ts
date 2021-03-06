@@ -1,38 +1,33 @@
 import { updateLinkDom, updateScriptDom } from "./dom.ts";
 
-export function hmr() {
-  const useTls = (location.protocol === "https:" ? "s" : "");
-  const socketProtocol = `ws${useTls}`;
-  const socketUrl = `${socketProtocol}://${location.host}/~/hmr.ts`;
-  const socket = new WebSocket(socketUrl);
+const socketUrl = import.meta.url.replace("http", "ws");
 
-  socket.addEventListener("message", function ({ data }) {
-    const parsedData = JSON.parse(data);
+const socket = new WebSocket(socketUrl);
 
-    if (Array.isArray(parsedData)) return;
+socket.addEventListener("message", function ({ data }) {
+  const parsedData = JSON.parse(data);
 
-    const { uuid, path } = parsedData;
+  if (Array.isArray(parsedData)) return;
 
-    switch (parsedData.action) {
-      case "link-update":
-        updateLinkDom(uuid, path);
-        break;
+  const { uuid, path } = parsedData;
 
-      case "script-update":
-        updateScriptDom(uuid, path);
-        break;
+  switch (parsedData.action) {
+    case "link-update":
+      updateLinkDom(uuid, path);
+      break;
 
-      case "full-reload":
-        location.reload();
-        break;
-    }
-  });
+    case "script-update":
+      updateScriptDom(uuid, path);
+      break;
 
-  socket.addEventListener("close", () => {
-    location.reload();
-  });
+    case "full-reload":
+      location.reload();
+      break;
+  }
+});
 
-  socket.addEventListener("open", () => {
-    console.log("[miku-devserver]: rechargement de fichier activé.");
-  });
-}
+socket.addEventListener("close", () => location.reload());
+
+socket.addEventListener("open", () => {
+  console.log("[miku-devserver]: rechargement de fichier activé.");
+});

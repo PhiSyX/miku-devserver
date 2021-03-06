@@ -8,12 +8,7 @@ import type {
   ServerResponseContext,
 } from "./server.ts";
 
-import {
-  ALIAS_DYN_IMPORT_RE,
-  ALIAS_IMPORT_RE,
-  aliasDynImport,
-  aliasImport,
-} from "./alias.ts";
+import { ALIAS_ATTR_RE, aliasAttr } from "./alias.ts";
 
 export function serveHtml(config: ConfigFileInterface) {
   return (
@@ -28,21 +23,12 @@ export function serveHtml(config: ConfigFileInterface) {
     let raw = `${body}`.replace(
       "</head>",
       [
-        '  <script type="module">',
-        '    import { hmr } from "miku-devserver";',
-        "    hmr();",
-        "  </script>",
+        '  <script type="module" src="miku-devserver"></script>',
         "</head>",
       ].join("\n"),
     )
-      .replaceAll(/(href|src)="([^"]+)"/gi, handleSource(request))
-      .replaceAll(
-        ALIAS_IMPORT_RE,
-        aliasImport(config.alias || {}),
-      ).replaceAll(
-        ALIAS_DYN_IMPORT_RE,
-        aliasDynImport(config.alias || {}),
-      );
+      .replaceAll(ALIAS_ATTR_RE, aliasAttr(config.alias!))
+      .replaceAll(ALIAS_ATTR_RE, handleSource(request));
 
     return {
       raw,

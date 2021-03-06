@@ -2,6 +2,10 @@ export type ConfigFileEnvType = "development" | "production" | "test";
 
 export type ConfigFileJSON = Partial<ConfigFileInterface>;
 
+export type Alias = {
+  [p: string]: string;
+};
+
 export interface ConfigFileInterface {
   env: ConfigFileEnvType;
   hostname: string;
@@ -17,7 +21,5 @@ export interface ConfigFileInterface {
     };
   };
   cache?: boolean;
-  alias?: {
-    [p: string]: string;
-  };
+  alias?: Alias;
 }
