@@ -1,16 +1,16 @@
 import { encode } from "https://deno.land/std@0.89.0/encoding/base64.ts";
 import { Sha1 } from "https://deno.land/std@0.89.0/hash/sha1.ts";
 
-import type { ConfigFileInterface } from "../config/config_file.d.ts";
+import type { ConfigFileInterface } from "../../config/config_file.d.ts";
 
-import init, { sass_compile as sassCompile } from "./compiler/compiler.js";
-import { ALIAS_IMPORT_RE, aliasImport } from "./alias.ts";
+import init, { sass_compile as sassCompile } from "../compiler/compiler.js";
+import { ALIAS_IMPORT_RE, aliasImport } from "../alias.ts";
 
 import type {
   ResponseRequest,
   ServerRequestContext,
   ServerResponseContext,
-} from "./server.ts";
+} from "../server.ts";
 
 export function serveCss(config: ConfigFileInterface) {
   return async (

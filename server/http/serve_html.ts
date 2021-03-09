@@ -1,14 +1,14 @@
 import { Sha1 } from "https://deno.land/std@0.89.0/hash/sha1.ts";
 
-import type { ConfigFileInterface } from "../config/config_file.d.ts";
+import type { ConfigFileInterface } from "../../config/config_file.d.ts";
 
 import type {
   ResponseRequest,
   ServerRequestContext,
   ServerResponseContext,
-} from "./server.ts";
+} from "../server.ts";
 
-import { ALIAS_ATTR_RE, aliasAttr } from "./alias.ts";
+import { ALIAS_ATTR_RE, aliasAttr } from "../alias.ts";
 
 export function serveHtml(config: ConfigFileInterface) {
   return (

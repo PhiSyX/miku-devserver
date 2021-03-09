@@ -12,11 +12,11 @@ import { extname } from "https://deno.land/std@0.89.0/path/mod.ts";
 // Mes modules
 import { readFile } from "../packages/helpers/deno/fs.ts";
 import { cache } from "./memory_cache.ts";
-import { serveCss } from "./serve_css.ts";
-import { serveJson } from "./serve_json.ts";
-import { serveHtml } from "./serve_html.ts";
-import { serveEcmaScript } from "./serve_ecmascript.ts";
-import { serveVue } from "./serve_vue.ts";
+import { serveCss } from "./http/serve_css.ts";
+import { serveJson } from "./http/serve_json.ts";
+import { serveHtml } from "./http/serve_html.ts";
+import { serveEcmaScript } from "./http/serve_ecmascript.ts";
+import { serveVue } from "./http/serve_vue.ts";
 
 export function handleRequest(config: ConfigFileInterface) {
   return async (request: ServerRequestContext) => {

@@ -1,10 +1,10 @@
-import type { ConfigFileInterface } from "../config/config_file.d.ts";
+import type { ConfigFileInterface } from "../../config/config_file.d.ts";
 
 import type {
   ResponseRequest,
   ServerRequestContext,
   ServerResponseContext,
-} from "./server.ts";
+} from "../server.ts";
 
 export function serveJson(_config: ConfigFileInterface) {
   return (

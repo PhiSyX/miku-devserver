@@ -1,5 +1,5 @@
-import { readFile } from "../packages/helpers/deno/fs.ts";
-import { assertEquals } from "../packages/helpers/deno/test_mod.ts";
+import { readFile } from "../../packages/helpers/deno/fs.ts";
+import { assertEquals } from "../../packages/helpers/deno/test_mod.ts";
 
 import { serveEcmaScript } from "./serve_ecmascript.ts";
 

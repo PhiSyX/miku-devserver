@@ -1,17 +1,17 @@
-import type { ConfigFileInterface } from "../config/config_file.d.ts";
+import type { ConfigFileInterface } from "../../config/config_file.d.ts";
 
 import {
   ALIAS_DYN_IMPORT_RE,
   ALIAS_IMPORT_RE,
   aliasDynImport,
   aliasImport,
-} from "./alias.ts";
+} from "../alias.ts";
 
 import type {
   ResponseRequest,
   ServerRequestContext,
   ServerResponseContext,
-} from "./server.ts";
+} from "../server.ts";
 
 export function serveEcmaScript(config: ConfigFileInterface) {
   return async (
