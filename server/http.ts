@@ -35,14 +35,17 @@ export function handleRequest(config: ConfigFileInterface) {
       nsVal,
     } = getNamespace(config)(request.url.pathname);
 
+    let namespaceType = "static";
+
     if (nsKey && nsVal) {
+      namespaceType = nsKey;
       response = await sendResourceDynamically(config, {
-        namespace: nsKey,
+        namespace: namespaceType,
         root: nsVal,
       })(request);
     } else {
       response = await sendResourceStatically(config, {
-        namespace: "static",
+        namespace: namespaceType,
       })(request);
     }
 
@@ -53,17 +56,17 @@ export function handleRequest(config: ConfigFileInterface) {
     headers.set("x-frame-options", "sameorigin");
     headers.set("x-xss-protection", "1; mode=block");
 
+    if (response.rawStatus === 301) {
+      // TODO: améliorer cette partie
+      headers.set("Location", request.url.pathname + "/");
+    }
+
     headers.set(
       "Content-Type",
       !isImportRequest(request)
         ? <string> contentType(response.rawType)
         : <string> contentType(response.sourceType),
     );
-
-    if (response.rawStatus === 301) {
-      // TODO: améliorer cette partie
-      headers.set("Location", request.url.pathname + "/");
-    }
 
     sendResponse(request, {
       body: !isImportRequest(request) ? response.raw : response.source,
@@ -207,7 +210,8 @@ function sendResourceStatically(config: ConfigFileInterface, options: {
       source: raw,
       sourceType: rawType,
 
-      status,
+      rawStatus: status,
+      sourceStatus: status,
 
       mtime: stats.mtime as Date,
     });
