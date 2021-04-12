@@ -31,13 +31,7 @@ export function addLinkDom(id: string, url: string) {
 }
 
 export function updateLinkDom(id: string, url: string) {
-  const linkID = `miku-uid-${id}`;
-  let $link = document.getElementById(linkID);
-  if ($link) {
-    $link.setAttribute("rel", "stylesheet");
-    $link.setAttribute("type", "text/css");
-    $link.setAttribute("href", url);
-  }
+  addLinkDom(id, url);
 }
 
 export function updateScriptDom(id: string, url: string) {
