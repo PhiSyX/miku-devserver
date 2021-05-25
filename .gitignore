@@ -1,9 +1,11 @@
 .vscode/
 .idea/
 /target
+/tmp
 
 *.unstage.*
 *.unstage
+*.lock
 
 config/tls/*
 !config/tls/README.md

@@ -1,0 +1,11 @@
+mode = "development"
+
+host = "localhost"
+port = 443
+https = { ca = "config/tls/CA.cer", key = "config/tls/localhost.pvk", cert = "config/tls/localhost.cer" }
+
+root_dir = "app"
+public_dir = "app/public"
+template_dir = "app/views"
+
+base_url = "/"

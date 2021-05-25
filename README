@@ -1,0 +1,2 @@
+1) Générer les certificats TLS, voir le fichier `config/tls/README.md` et les
+   installer sur son OS.
