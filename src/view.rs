@@ -1,6 +1,7 @@
-use miku_devserver_config::config::Config;
 use tera::Context;
 use tera::Tera;
+
+use miku_devserver_config::config::Config;
 
 #[derive(Clone)]
 pub struct View {
@@ -20,7 +21,11 @@ impl View {
 
     context.insert(
       "base_url",
-      self.config.base_url.as_ref().unwrap_or(&format!("/")),
+      self
+        .config
+        .base_url
+        .as_ref()
+        .unwrap_or(&format!("/")),
     );
 
     self.template.render(name, &context)
