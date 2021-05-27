@@ -1,0 +1,9 @@
+{% macro post_link(url, content) %}
+  {% set form_id = url | slugify %}
+  {% set form_url = base_url ~ url %}
+
+  <a href="{{ form_url }}" onclick="post_link_event(event, '{{ form_id }}')">{{ content }}</a>
+  <form id="{{ form_id }}" action="{{ form_url }}" method="POST">
+    <input type="hidden" name="validity_type" value="IS_INVALID">
+  </form>
+{% endmacro post_link %}

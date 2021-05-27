@@ -8,6 +8,10 @@ members = ["config"]
 
 [dependencies]
 async-std = { version = "1.9.0", features = ["attributes"] }
+fake = { version = "2.4", features = ['derive'] }
+rand = "0.8"
+rusqlite = { version = "0.25.3", features = ["bundled"] }
+serde = { version = "1.0.126", features = ["derive"] }
 structopt = "0.3.21"
 thiserror = "1.0.25"
 tide = "0.16.0"

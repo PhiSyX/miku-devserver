@@ -1,2 +1,7 @@
 1) Générer les certificats TLS, voir le fichier `config/tls/README.md` et les
    installer sur son OS.
+
+2) Créer un fichier vide pour la base de donnée SQLite.
+  ```bash
+  mkdir tmp && touch tmp/database.sqlite
+  ```

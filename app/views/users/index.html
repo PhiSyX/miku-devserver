@@ -1,0 +1,33 @@
+{% extends "_layout.html" %}
+
+{% block title %}Liste des utilisateurs{% endblock title %}
+
+{% block content %}
+
+  <pre>
+    SELECT ROWID,`first_name`,`last_name`,`age`
+    FROM `users`
+    ORDER BY `last_name`,`first_name`
+  </pre>
+
+  {{ macro_post_link::post_link(url="users/create",content="Crée un nouvel utilisateur") }}
+
+  <ul>
+  {% for user in users -%}
+
+    <li>
+      {{ user.id }} -> {{ user.first_name }} {{ user.last_name }}: {{ user.age }}
+      {{ macro_post_link::post_link(url="users/delete/" ~ user.last_name,content="[x]") }}
+    </li>
+
+  {% else %}
+
+    <li>
+      <strong>Il n'y a pas d'utilisateurs</strong>
+    </li>
+
+  {%- endfor %}
+
+  </ul>
+
+{% endblock content %}

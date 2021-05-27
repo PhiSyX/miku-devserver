@@ -1,4 +1,6 @@
-{% import "tags/style.html" as macro %}
+{% import "tags/style.html" as macro_style %}
+{% import "tags/post_link.html" as macro_post_link %}
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -6,8 +8,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Document{% endblock title %}</title>
-  {{ macro::style(url="css/style.css") }}
+  {{ macro_style::style(url="css/style.css") }}
   {% block head %}{% endblock head %}
+  <script>
+    function post_link_event(evt, form_id) {
+      evt.preventDefault();
+      const $form = document.getElementById(form_id);
+      const [$input] = $form.getElementsByTagName("input");
+      $input.value = "厳秘";
+      $form.appendChild($input)
+      $form.submit();
+    }
+  </script>
 </head>
 
 <body>
